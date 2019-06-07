@@ -65,26 +65,31 @@ function load(req, res, next, id) {
  * @returns {User}
  */
 function get(req, res) {
-  const tokenOwner = req.user.keyStore.address;
+  const user = {
+    _id: req.user._id,
+    email: req.user.email,
+    name: (req.user.name) ? req.user.name : '',
+    status: req.user.status,
+    role: req.user.role,
+    createdAt: req.user.createdAt,
+    registeredAt: (req.user.registeredAt) ? req.user.registeredAt : '',
+    avatar: (req.user.avatar) ? req.user.avatar : '',
+    thumbnail: (req.user.thumbnail) ? req.user.thumbnail : '',
+    keyStore: (req.user.keyStore) ? req.user.keyStore : '',
+    tokens: 0
+  };
 
-  erc20.methods.balanceOf(tokenOwner).call()
-  .then(function (balance) {
-    var user = {
-      _id: req.user._id,
-      email: req.user.email,
-      name: req.user.name,
-      status: req.user.status,
-      role: req.user.role,
-      createdAt: req.user.createdAt,
-      registeredAt: req.user.registeredAt,
-      avatar: req.user.avatar,
-      thumbnail: req.user.thumbnail,
-      keyStore: req.user.keyStore,
-      tokens: web3.utils.fromWei(web3.utils.toBN(balance))
-    };
-    res.json(user);
-	})
-  .catch(e => console.error);
+  if (req.user.keyStore) {
+    const tokenOwner = req.user.keyStore.address;
+    erc20.methods.balanceOf(tokenOwner).call()
+    .then(function (balance) {
+      user.tokens = web3.utils.fromWei(web3.utils.toBN(balance));
+      return res.json(user);
+    })
+    .catch(e => console.error);
+  } else {
+    return res.json(user);
+  }
 }
 
 /**

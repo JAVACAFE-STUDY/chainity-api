@@ -78,9 +78,8 @@ function get(req, res) {
     keyStore: (req.user.keyStore) ? req.user.keyStore : '',
     tokens: 0
   };
-
-  if (req.user.keyStore) {
-    const tokenOwner = req.user.keyStore.address;
+  const tokenOwner = req.user.keyStore.address;
+  if (tokenOwner) {
     erc20.methods.balanceOf(tokenOwner).call()
     .then(function (balance) {
       user.tokens = web3.utils.fromWei(web3.utils.toBN(balance));

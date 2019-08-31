@@ -2,7 +2,7 @@ version: "2"
 services:
   api:
     build: .
-    image: chanity-api:0.5.0
+    image: chanity-api:0.8.2
     container_name: chanitiy-api
     ports:
     - "3000:3000"

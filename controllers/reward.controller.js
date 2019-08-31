@@ -93,7 +93,7 @@ function create(req, res, next) {
         savedReward.save();
       }).on('error', console.error);
     })
-    .catch(e => next(e));
+    .catch(e => console.error(e));
 }
 
 module.exports = { list, create };

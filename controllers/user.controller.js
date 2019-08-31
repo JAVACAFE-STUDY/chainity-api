@@ -117,7 +117,7 @@ function create(req, res, next) {
  * @returns {User}
  */
 function update(req, res, next) {
-  const user = new User(req.user);
+  const user = {};
   if (req.body.name) {
     user.name = req.body.name;
   }
@@ -128,10 +128,21 @@ function update(req, res, next) {
     user.status = req.body.status;
   }
 
+  User.update({_id: req.user._id}, {
+      "$set": user
+    })
+    .then(savedUser => res.json(savedUser))
+    .catch(e => next(e));
+}
+
+function register(req, res, next) {
+  const user = new User(req.user);
+
   User.update({_id: user.id}, user)
     .then(savedUser => res.json(savedUser))
     .catch(e => next(e));
 }
+
 
 /**
  * Get user list.
@@ -197,7 +208,12 @@ function uploadImage(req, res, next) {
         const user = new User(req.user);
         user.avatar = req.file.path.replace(config.image.uploadPath,'');
         user.thumbnail = files[0].dstPath.replace(config.image.uploadPath, '');
-        User.update({_id: user.id}, user)
+        User.update({_id: user.id}, {
+          "$set": {
+            "avatar": user.avatar,
+            "thumbnail": user.thumbnail
+          }
+        })
           .then(() => res.json({ user }))
           .catch(e => next(e));
       }).catch(function(e) {
@@ -219,4 +235,4 @@ function getSystem(req, res) {
     .catch(e => next(e));;
 }
 
-module.exports = { load, get, create, update, list, remove, activeList, addressList, uploadImage, getSystem };
+module.exports = { load, get, create, update, list, remove, activeList, addressList, uploadImage, getSystem, register };

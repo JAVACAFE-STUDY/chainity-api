@@ -11,7 +11,7 @@ var ObjectID = require('mongodb').ObjectID
 const ParticipationSchema = new mongoose.Schema({
   event: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Issues',
+    ref: 'Event',
     required: true
   },
   participant: {
